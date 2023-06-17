@@ -1,0 +1,126 @@
+name: Windows Server 2019 Premium cho Fansub Beta 1.0
+
+on:
+
+  workflow_dispatch:
+
+    inputs:
+
+      os:
+
+        description: 'Nhập token Ngrok'
+
+        required: true
+      us:
+        description: 'Nhập tên người dùng'
+
+        required: true
+      os2:
+
+        description: 'Nhập mật khẩu'
+
+        required: true
+      
+jobs:
+
+  Windows_Server_2019:
+
+    timeout-minutes: 360
+
+    runs-on: windows-2019
+
+    name: Đang chạy
+
+    steps:
+
+    - name: Tải code cấu hình...
+
+      uses: actions/checkout@v3
+
+      timeout-minutes: 360
+
+    - name: Tạo tài khoản
+
+      run: |
+
+            powershell.exe -File 1.ps1 > $null
+            
+            net user ${{ github.event.inputs.us }} ${{ github.event.inputs.os2 }} /add
+            
+            net localgroup administrators ${{ github.event.inputs.us }}  /add
+
+            net.exe user $env:UserName ${{ github.event.inputs.os2 }} > $null
+
+            net.exe user installer ${{ github.event.inputs.os2 }} > $null
+
+      timeout-minutes: 360
+
+    - name: Setup cho Ngrok và Remote Desktop
+
+      run: |
+
+            powershell.exe -File 2.ps1
+
+            ngrok authtoken ${{ github.event.inputs.os }}
+
+    - name: Chạy Ngrok
+
+      shell: bash
+
+      run: ngrok tcp 3389  &>/dev/null &
+
+    - name: Setup cho Windows 2019 Fansub Edition
+      run: |
+         write-host Thông tin hệ điều hành:
+         write-host ......................
+         sleep 2
+         write-host Windows Server Data Center Github 2019
+
+         write-host Phần phụ trợ tuỳ biến:
+         write-host ......................
+         sleep 2
+         write-host Rinne Audio và người dùng tự tuỳ biến
+         write-host Phiên bản tuỳ biến:
+         write-host Beta1.0-4.5.2023
+         choco install aegisub > $null
+         write-host Đã thiết lập Aegisub
+         choco install handbrake > $null
+         write-host Đang thiết lập phần mềm encode > $null
+         choco install formatfactory > $null
+         write-host Đã xong!
+         choco install transmission > $null
+         write-host Thiết lập cài đặt cho Torrent đã xong!
+
+         write-host Đã xong!
+         write-host Đang cài đặt ứng dụng người dùng tuỳ chọn
+         powershell.exe -File pgnguoidung.ps1 > $null
+      timeout-minutes: 360
+    - name: Sau đây là mật khẩu và username
+      run: |
+            write-host Username: ${{ github.event.inputs.us }}
+            write-host Username: $env:UserName
+
+            write-host Username: installer
+           
+
+            write-host Password: ${{ github.event.inputs.os2 }}
+
+      timeout-minutes: 360
+    - name: Nhận IP VPS
+      run: |
+            write-host IP LÀ:
+
+            curl -s localhost:4040/api/tunnels | jq -r .tunnels[0].public_url || echo "Lỗi token"
+
+            write-host Hãy bỏ "tcp://" và bỏ vào phần IP
+
+            write-host Password: ${{ github.event.inputs.os2 }}
+
+            powershell.exe -File 3.ps1
+
+      timeout-minutes: 360
+    - name: Đã tạo thành công
+      shell: bash
+      run: |
+          yes &>/dev/null
+      timeout-minutes: 360

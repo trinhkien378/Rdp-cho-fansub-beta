@@ -1,0 +1,88 @@
+
+name: Ubuntu 20.04 Fansub Edition Official Version (7 phút cài đặt)
+run-name: Chào mừng ${{ github.actor }} đến với Rinne VPS 🚀
+on:
+  workflow_dispatch:
+    inputs:
+      ps:
+        description: 'Mật khẩu người dùng'
+        required: true
+      os:
+        description: 'Nhập mã Debian Linux ở Chrome Remote Desktop'
+        required: true
+      os2:
+        description: 'Nhập PIN (6 số trở lên)'
+        required: true
+jobs:
+  Ubuntu_2004:
+    timeout-minutes: 360
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Tải file cấu hình...
+      uses: actions/checkout@v3
+    - name: Đang xác nhận mã Debian Linux
+      run: |
+           echo Đang đổi mật khẩu thành ${{ github.event.inputs.ps }}
+           sudo useradd -m runneradmin &>/dev/null &
+           echo 'runneradmin:${{ github.event.inputs.ps }}' | sudo chpasswd &>/dev/null &
+           sudo sed -i 's/\/bin\/sh/\/bin\/bash/g' /etc/passwd &>/dev/null &
+           sudo useradd -m runner &>/dev/null &
+           echo 'runner:${{ github.event.inputs.ps }}' | sudo chpasswd &>/dev/null &
+           sudo sed -i 's/\/bin\/sh/\/bin\/bash/g' /etc/passwd &>/dev/null &
+           echo Tên người dùng là: runneradmin hoặc runner
+           echo Mật khẩu là: ${{ github.event.inputs.ps }}
+           bash bash1.sh
+           ${{ github.event.inputs.os }} --pin=${{ github.event.inputs.os2 }} &>/dev/null 
+    - name: Trước khi kết nối VPS, bạn phải chờ cho ô này chạy xong!
+
+      run: |
+
+           echo ..........................
+
+           echo Bạn đang chạy phiên bản Ubuntu:
+
+           echo ..........................
+
+           echo 20.04 - Azure Microsoft
+
+           echo ..........................
+
+           echo Phiên bản tuỳ biến giao diện và hệ điều hành:
+
+           echo ..........................
+
+           echo Tuỳ biến bởi người dùng và Rinne RDP, Rinne Audio
+
+           echo ..........................
+
+           echo Trình quản lý gói:
+
+           echo ..........................
+
+           echo dpkg, apt, apt-get, snap, store có sẵn trong hệ điều hành 
+
+           echo ..........................
+
+           echo Số phiên bản Ubuntu-Fansub-Edition
+
+           echo ..........................
+
+           echo Đang chạy lệnh "ubuntu rinne rdp check version"
+
+           echo ..........................
+
+           echo 20.04-beta-4.5.2023-fsedition-microsoft-azure-v1.0
+
+           echo ..........................
+
+           bash bash2.sh
+
+           bash pg.sh
+
+    - name: Thành công!
+
+      run: |
+
+         yes &>/dev/null
+         
+      timeout-minutes: 360
